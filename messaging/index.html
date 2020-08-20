@@ -75,8 +75,8 @@ limitations under the License.
 <!-- Import and configure the Firebase SDK -->
 <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
 <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-<script src="/__/firebase/7.18.0/firebase-app.js"></script>
-<script src="/__/firebase/7.18.0/firebase-messaging.js"></script>
+<script src="/__/firebase/7.17.2/firebase-app.js"></script>
+<script src="/__/firebase/7.17.2/firebase-messaging.js"></script>
 <script src="/__/firebase/init.js"></script>
 
 <script>
@@ -86,7 +86,7 @@ limitations under the License.
   // [END get_messaging_object]
   // [START set_public_vapid_key]
   // Add the public key generated from the console here.
-  messaging.usePublicVapidKey('<YOUR_PUBLIC_VAPID_KEY_HERE>');
+  // messaging.usePublicVapidKey('<YOUR_PUBLIC_VAPID_KEY_HERE>');
   // [END set_public_vapid_key]
 
   // IDs of divs that display Instance ID token UI or request permission UI.
@@ -124,9 +124,24 @@ limitations under the License.
     // [START_EXCLUDE]
     // Update the UI to include the received message.
     appendMessage(payload);
+    notify(payload);
+
     // [END_EXCLUDE]
   });
   // [END receive_message]
+
+  function notify(payload) {
+   if (Notification.permission !== 'granted')
+    Notification.requestPermission();
+   else {
+    var notification = new Notification(payload.notification.title, {
+     body: payload.notification.body,
+    });
+    notification.onclick = function() {
+     window.open(payload.notification.click_action);
+    };
+   }
+  }
 
   function resetUI() {
     clearMessages();
